@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PostsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,8 +15,14 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('layout.app');
-});
-Route::get('/post', function () {
-    return view('posts.index');
-});
+    return view('layouts.app');
+})->name('/home');
+
+
+//posts routes for CRUD
+Route::get('/post', [PostsController::class, 'index'])->name('post.index');
+// Route::get('/post/create', [PostsController::class, 'create'])->name('post.create');
+// Route::post('/post/store', [PostsController::class, 'store'])->name('post.store');
+// Route::get('/post/edit/{id}', [PostsController::class, 'edit'])->name('post.edit');
+// Route::post('/post/update/{id}', [PostsController::class, 'update'])->name('post.update');
+// Route::get('/post/delete/{id}', [PostsController::class, 'destroy'])->name('post.delete');
