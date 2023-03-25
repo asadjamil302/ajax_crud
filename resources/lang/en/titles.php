@@ -13,4 +13,6 @@ return [
     'edit' => 'Edit',
     'delete' => 'Delete',
     'update' => 'Update',
+    'create_post' => 'Create Post',
+    'status' => 'Status',
 ];
