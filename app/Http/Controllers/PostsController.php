@@ -46,4 +46,9 @@ class PostsController extends Controller
         return response()->json(['success' => 'Post created successfully.'], 200);
 
     }
+    public function edit(Request $request, $id)
+    {
+        $post = DB::table('posts')->where('id', $id)->get();
+        return response()->json($post);
+    }
 }

@@ -58,8 +58,10 @@
                                 <td><img src="/post_images/{{ $post->image }}" alt="Image Not Exists!!!" width="20px"
                                         height="20px"></td>
                                 <td>
-                                    <a href="#" class="btn btn-primary btn-sm"><i class="fas fa-pencil-alt"></i></a>
-                                    <a href="#" class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i></a>
+                                    <button class="btn btn-outline-primary btn-sm edit_modal_btn" data-id="{{ $post->id }}"
+                                        ><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-outline-danger btn-sm delete_modal_btn"
+                                        data-id="{{ $post->id }}"><i class="fas fa-trash"></i></button>
                                 </td>
                             </tr>
                         @endforeach
@@ -74,7 +76,7 @@
     </div>
 @endsection
 @section('modal')
-    <!-- Modal -->
+    <!-- Create Post Modal -->
     <div class="modal fade" id="create_modal" tabindex="-1" role="dialog" aria-labelledby="create_modal_title"
         aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -99,9 +101,13 @@
                         </div>
                         <div class="form-group">
                             <label for="image">{{ __('titles.image') }}</label>
-                            <input type="file" class="form-control-file" id="image" name="image" required>
+                            <input type="file" class="form-control-file" id="image" name="image" required
+                                onchange="previewImage();">
                         </div>
-
+                        <div class="form-group">
+                            <img id="preview" src="#" alt="Image Preview" class="img-thumbnail rounded-circle"
+                                style="width: 100px; height: 100px; display: none;">
+                        </div>
                         <div class="form-group">
                             <label for="description">{{ __('titles.description') }}</label>
                             <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
@@ -117,6 +123,58 @@
             </div>
         </div>
     </div>
+    <!-- End Create Post Modal -->
+
+    <!-- Edit Post Modal -->
+    <div class="modal fade" id="edit_modal" tabindex="-1" role="dialog" aria-labelledby="edit_modal_title"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="edit_modal_title">{{ __('titles.edit_post') }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="edit_save_form" method="POST" enctype="multipart/form-data">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="title">{{ __('titles.title') }}</label>
+                            <input type="text" class="form-control" placeholder="Enter Title" name="title"
+                                value="{{ $post->title }}" id="title" required>
+                        </div>
+
+                        <div class="form-group form-check">
+                            <input type="checkbox" class="form-check-input" id="active" name="active"
+                                {{ $post->active == 'Y' ? 'checked' : '' }}>
+                            <label class="form-check-label" for="active">{{ __('titles.status') }}</label>
+                        </div>
+                        <div class="form-group">
+                            <label for="image">{{ __('titles.image') }}</label>
+                            <input type="file" class="form-control-file" id="image" name="image" required
+                                value="{{ $post->image }}" onchange="previewImage();">
+                        </div>
+                        <div class="form-group">
+                            <img id="preview" src="/post_images/{{ $post->image }}" alt="Image Preview"
+                                class="img-thumbnail rounded-circle" style="width: 100px; height: 100px; display: none;">
+                        </div>
+                        <div class="form-group">
+                            <label for="description">{{ __('titles.description') }}</label>
+                            <textarea class="form-control" id="description" name="description" rows="3" required>{{ $post->description }}</textarea>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary"
+                            data-dismiss="modal">{{ __('buttons.close') }}</button>
+                        <button type="submit" class="btn btn-success">{{ __('buttons.update') }}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- End Edit Post Modal -->
+
 
 @endsection
 
@@ -154,8 +212,76 @@
 
             });
 
+            //open edit modal and get data from database using ajax request and show in modal form
+            $('.edit_modal_btn').click(function() {
+                var id = $(this).data('id');
+                $.ajax({
+                    type: 'GET',
+                    url: "{{ route('post.edit', ':id') }}".replace(':id', id),
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    data: {
+                        id: id
+                    },
+                    success: function(data) {
+                        $('#edit_modal').modal('show');
+                        $('#title').val(data.title);
+                        $('#active').val(data.active);
+                        $('#image').val(data.image);
+                        $('#description').val(data.description);
+
+                    },
+                    error: function(data) {
+                        console.log(data);
+                    }
+                });
+            });
+
+
+            //edit post ajax request
+            // $('#edit_save_form').submit(function(e) {
+            //     e.preventDefault();
+            //     var formData = new FormData(this);
+            //     $.ajax({
+            //         type: 'POST',
+            //         url: "{{ route('post.update', $post->id) }}",
+            //         headers: {
+            //             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            //         },
+            //         data: formData,
+            //         contentType: false,
+            //         processData: false,
+            //         success: function(data) {
+            //             $('#edit_modal').modal('hide');
+            //             location.reload();
+            //         },
+            //         error: function(data) {
+            //             console.log(data);
+            //         }
+            //     });
+            // });
 
 
         });
+
+        // Image Preview Function
+        function previewImage() {
+            var preview = document.getElementById('preview');
+            var file = document.getElementById('image').files[0];
+            var reader = new FileReader();
+
+            reader.onloadend = function() {
+                preview.src = reader.result;
+                preview.style.display = 'block';
+            }
+
+            if (file) {
+                reader.readAsDataURL(file);
+            } else {
+                preview.src = '';
+                preview.style.display = 'none';
+            }
+        }
     </script>
 @endsection

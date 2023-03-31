@@ -22,6 +22,6 @@ Route::get('/', function () {
 //posts routes for CRUD
 Route::get('/post', [PostsController::class, 'index'])->name('post.index');
 Route::post('/post/store', [PostsController::class, 'store'])->name('post.store');
-// Route::get('/post/edit/{id}', [PostsController::class, 'edit'])->name('post.edit');
-// Route::post('/post/update/{id}', [PostsController::class, 'update'])->name('post.update');
+Route::get('/post/edit/{id}', [PostsController::class, 'edit'])->name('post.edit');
+Route::post('/post/update/{id}', [PostsController::class, 'update'])->name('post.update');
 // Route::get('/post/delete/{id}', [PostsController::class, 'destroy'])->name('post.delete');
