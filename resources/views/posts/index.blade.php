@@ -164,7 +164,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger mr-auto" id="delete_btn"
-                        data-id="">{{ __('buttons.delete') }}</button>
+                            data-id="">{{ __('buttons.delete') }}</button>
                         <button type="button" class="btn btn-secondary"
                             data-dismiss="modal">{{ __('buttons.close') }}</button>
                         <button type="button" class="btn btn-success" id="update_btn"
