@@ -41,7 +41,6 @@ class PostsController extends Controller
             $image->move($destinationPath, $name);
             $data['image'] = $name;
         }
-        //insert data into database response json data with scuccess message
         $post =DB::table('posts')->insert($data);
         return response()->json([
             'success' => 'Post created successfully.'
@@ -56,7 +55,6 @@ class PostsController extends Controller
             'success' => 'Post fetched successfully.',
         ], 200);
     }
-    //update post
     public function update(Request $request, $id)
     {
         $data = $request->validate([
@@ -73,12 +71,10 @@ class PostsController extends Controller
             $image->move($destinationPath, $name);
             $data['image'] = $name;
         }
-        //update data into database response json data with scuccess message
         $post = DB::table('posts')->where('id', $id)->update($data);
         return response()->json([ 'post' => $post,
             'success' => 'Post updated successfully.'], 200);
     }
-    //delete post
     public function destroy($id)
     {
         $post = DB::table('posts')->where('id', $id)->delete();
