@@ -151,12 +151,12 @@
                         </div>
                         <div class="form-group">
                             <label for="image">{{ __('titles.image') }}</label>
-                            <input type="file" class="form-control-file" id="image" name="image" required
+                            <input type="file" class="form-control-file" id="image" name="image" 
                                 value="{{ $post->image }}" onchange="previewImage();">
                         </div>
                         <div class="form-group">
                             <img id="preview" src="/post_images/{{ $post->image }}" alt="Image Preview"
-                                class="img-thumbnail rounded-circle" style="width: 100px; height: 100px; display: none;">
+                                 class="img-thumbnail rounded-circle" style="width: 100px; height: 100px;">
                         </div>
                         <div class="form-group">
                             <label for="description">{{ __('titles.description') }}</label>
@@ -167,7 +167,7 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary"
                             data-dismiss="modal">{{ __('buttons.close') }}</button>
-                        <button type="submit" class="btn btn-success">{{ __('buttons.update') }}</button>
+                        <button type="button" class="btn btn-success" id="update_btn" data-id="{{ $post->id }}">{{ __('buttons.update') }}</button>
                     </div>
                 </form>
             </div>
@@ -217,51 +217,52 @@
                 var id = $(this).data('id');
                 $.ajax({
                     type: 'GET',
-                    url: "{{ route('post.edit', ':id') }}".replace(':id', id),
+                    url: "/post/edit/" + id,
+                    success: function(data) {
+                        console.log(data);
+                        var post= data.post[0];
+                        $('#edit_modal').modal('show');
+                        $('#edit_save_form').find('#title').val(post.title);
+                        $('#edit_save_form').find('#description').val(post.description);
+                        $('#edit_save_form').find('#active').val(post.active);
+                        $('#edit_save_form').find('#preview').attr('src', '/post_images/' + post.image);
+                        $('#edit_save_form').attr('action', '/post/' + post.id);
+                    },
+                    error: function(data) {
+                        console.log(data);
+                    }
+
+                    
+                });
+            });
+
+            //edit_save_form ajax request for update post
+            // ('#update_btn').click submit form using ajax request  and update post
+            /* Updating the data in the database. */
+            $('#update_btn').click(function(e) {
+                e.preventDefault();
+                var id = $('#update_btn').data('id');
+                var formData = new FormData($('#edit_save_form')[0]);
+                $.ajax({
+                    type: 'POST',
+                    url:  '/post/update/' + id,
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
-                    data: {
-                        id: id
-                    },
+                    data: formData,
+                    contentType: false,
+                    processData: false,
                     success: function(data) {
-                        $('#edit_modal').modal('show');
-                        $('#title').val(data.title);
-                        $('#active').val(data.active);
-                        $('#image').val(data.image);
-                        $('#description').val(data.description);
-
+                        $('#edit_modal').modal('hide');
+                        location.reload();
                     },
                     error: function(data) {
                         console.log(data);
                     }
                 });
             });
-
-
-            //edit post ajax request
-            // $('#edit_save_form').submit(function(e) {
-            //     e.preventDefault();
-            //     var formData = new FormData(this);
-            //     $.ajax({
-            //         type: 'POST',
-            //         url: "{{ route('post.update', $post->id) }}",
-            //         headers: {
-            //             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            //         },
-            //         data: formData,
-            //         contentType: false,
-            //         processData: false,
-            //         success: function(data) {
-            //             $('#edit_modal').modal('hide');
-            //             location.reload();
-            //         },
-            //         error: function(data) {
-            //             console.log(data);
-            //         }
-            //     });
-            // });
-
+        
+   
 
         });
 
