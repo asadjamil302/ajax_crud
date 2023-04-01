@@ -42,8 +42,10 @@ class PostsController extends Controller
             $data['image'] = $name;
         }
         //insert data into database response json data with scuccess message
-        $response =DB::table('posts')->insert($data);
-        return response()->json(['success' => 'Post created successfully.'], 200);
+        $post =DB::table('posts')->insert($data);
+        return response()->json([
+            'success' => 'Post created successfully.'
+        ], 200);
 
     }
     public function edit(Request $request, $id)
@@ -57,7 +59,6 @@ class PostsController extends Controller
     //update post
     public function update(Request $request, $id)
     {
-        // dd($request->all(), $id);
         $data = $request->validate([
             'title' => 'required|max:255',
             'description' => 'required|max:1000',
@@ -76,5 +77,13 @@ class PostsController extends Controller
         $post = DB::table('posts')->where('id', $id)->update($data);
         return response()->json([ 'post' => $post,
             'success' => 'Post updated successfully.'], 200);
+    }
+    //delete post
+    public function destroy($id)
+    {
+        $post = DB::table('posts')->where('id', $id)->delete();
+        return response()->json([
+            'success' => 'Post deleted successfully.'
+        ], 200);
     }
 }

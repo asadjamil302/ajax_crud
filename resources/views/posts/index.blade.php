@@ -13,11 +13,10 @@
                 </ol>
             </div>
         </div>
-        @if (session('success'))
-            <div class="alert alert-success">
-                {{ session('success') }}
-            </div>
-        @endif
+
+        <div class="alert alert-success" style="display: none;"></div>
+        <div class="alert alert-danger" style="display: none;"></div>
+
         <div class="row mb-3">
             <div class="col-lg-6">
                 <div class="float-left">
@@ -58,10 +57,10 @@
                                 <td><img src="/post_images/{{ $post->image }}" alt="Image Not Exists!!!" width="20px"
                                         height="20px"></td>
                                 <td>
-                                    <button class="btn btn-outline-primary btn-sm edit_modal_btn" data-id="{{ $post->id }}"
-                                        ><i class="fas fa-edit"></i></button>
-                                    <button class="btn btn-outline-danger btn-sm delete_modal_btn"
-                                        data-id="{{ $post->id }}"><i class="fas fa-trash"></i></button>
+                                    <button class="btn btn-outline-primary btn-sm edit_modal_btn"
+                                        data-id="{{ $post->id }}"><i class="fas fa-edit"></i></button>
+                                    {{-- <button class="btn btn-outline-danger btn-sm delete_modal_btn"
+                                        data-id="{{ $post->id }}"><i class="fas fa-trash"></i></button> --}}
                                 </td>
                             </tr>
                         @endforeach
@@ -141,33 +140,35 @@
                         <div class="form-group">
                             <label for="title">{{ __('titles.title') }}</label>
                             <input type="text" class="form-control" placeholder="Enter Title" name="title"
-                                value="{{ $post->title }}" id="title" required>
+                                value="" id="title" required>
                         </div>
 
                         <div class="form-group form-check">
-                            <input type="checkbox" class="form-check-input" id="active" name="active"
-                                {{ $post->active == 'Y' ? 'checked' : '' }}>
+                            <input type="checkbox" class="form-check-input" id="active" name="active">
                             <label class="form-check-label" for="active">{{ __('titles.status') }}</label>
                         </div>
                         <div class="form-group">
                             <label for="image">{{ __('titles.image') }}</label>
-                            <input type="file" class="form-control-file" id="image" name="image" 
-                                value="{{ $post->image }}" onchange="previewImage();">
+                            <input type="file" class="form-control-file" id="image" name="image"
+                                value="" onchange="previewImage();">
                         </div>
                         <div class="form-group">
-                            <img id="preview" src="/post_images/{{ $post->image }}" alt="Image Preview"
-                                 class="img-thumbnail rounded-circle" style="width: 100px; height: 100px;">
+                            <img id="preview" src="" alt="Image Preview" class="img-thumbnail rounded-circle"
+                                style="width: 100px; height: 100px;">
                         </div>
                         <div class="form-group">
                             <label for="description">{{ __('titles.description') }}</label>
-                            <textarea class="form-control" id="description" name="description" rows="3" required>{{ $post->description }}</textarea>
+                            <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
                         </div>
 
                     </div>
                     <div class="modal-footer">
+                        <button type="button" class="btn btn-danger mr-auto" id="delete_btn"
+                        data-id="">{{ __('buttons.delete') }}</button>
                         <button type="button" class="btn btn-secondary"
                             data-dismiss="modal">{{ __('buttons.close') }}</button>
-                        <button type="button" class="btn btn-success" id="update_btn" data-id="{{ $post->id }}">{{ __('buttons.update') }}</button>
+                        <button type="button" class="btn btn-success" id="update_btn"
+                            data-id="">{{ __('buttons.update') }}</button>
                     </div>
                 </form>
             </div>
@@ -202,10 +203,15 @@
                     processData: false,
                     success: function(data) {
                         $('#create_modal').modal('hide');
-                        location.reload();
+                        $('.alert-success').html(data.success).show();
+                        //after 3 sec location.reload();
+                        setTimeout(function() {
+                            location.reload();
+                        }, 2000);
                     },
                     error: function(data) {
                         console.log(data);
+                        $('.alert-danger').html("Error: " + data.statusText).show();
                     }
                 });
 
@@ -215,37 +221,45 @@
             //open edit modal and get data from database using ajax request and show in modal form
             $('.edit_modal_btn').click(function() {
                 var id = $(this).data('id');
+
                 $.ajax({
                     type: 'GET',
                     url: "/post/edit/" + id,
                     success: function(data) {
-                        console.log(data);
-                        var post= data.post[0];
+                        var post = data.post[0];
                         $('#edit_modal').modal('show');
                         $('#edit_save_form').find('#title').val(post.title);
                         $('#edit_save_form').find('#description').val(post.description);
-                        $('#edit_save_form').find('#active').val(post.active);
-                        $('#edit_save_form').find('#preview').attr('src', '/post_images/' + post.image);
+                        //check if $request->has('active') ?'Y' : 'N'; is true or false
+                        if (post.active == 'Y') {
+                            $('#edit_save_form').find('#active').prop('checked', true);
+                        } else {
+                            $('#edit_save_form').find('#active').prop('checked', false);
+                        }
+                        $('#edit_save_form').find('#preview').attr('src', '/post_images/' + post
+                            .image);
                         $('#edit_save_form').attr('action', '/post/' + post.id);
+                        $('#update_btn').attr('data-id', post.id);
+                        $('#delete_btn').attr('data-id', post.id);
+
                     },
                     error: function(data) {
                         console.log(data);
+                        $('.alert-danger').html("Error: " + data.statusText).show();
                     }
 
-                    
+
                 });
             });
 
-            //edit_save_form ajax request for update post
-            // ('#update_btn').click submit form using ajax request  and update post
             /* Updating the data in the database. */
             $('#update_btn').click(function(e) {
                 e.preventDefault();
-                var id = $('#update_btn').data('id');
+                var id = $(this).data('id');
                 var formData = new FormData($('#edit_save_form')[0]);
                 $.ajax({
                     type: 'POST',
-                    url:  '/post/update/' + id,
+                    url: '/post/update/' + id,
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
@@ -254,15 +268,42 @@
                     processData: false,
                     success: function(data) {
                         $('#edit_modal').modal('hide');
-                        location.reload();
+                        $('.alert-success').html(data.success).show();
+                        //after 3 sec location.reload();
+                        setTimeout(function() {
+                            location.reload();
+                        }, 2000);
+
+
                     },
                     error: function(data) {
                         console.log(data);
+                        $('.alert-danger').html("Error: " + xhr.statusText).show();
                     }
                 });
             });
-        
-   
+
+            //delete post ajax request
+            $('#delete_btn').click(function(e) {
+                e.preventDefault();
+                var id = $(this).data('id');
+                $.ajax({
+                    type: 'delete',
+                    url: '/post/delete/' + id,
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(data) {
+                        $('#edit_modal').modal('hide');
+                        location.reload();
+                        $('.alert-success').html(data.success).show();
+                    },
+                    error: function(data) {
+                        console.log(data);
+                        $('.alert-danger').html("Error: " + data.statusText).show();
+                    }
+                });
+            });
 
         });
 
