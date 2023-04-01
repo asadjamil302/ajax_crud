@@ -19,6 +19,7 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+    @livewireStyles
     @yield('styles.css')
 </head>
 
@@ -50,12 +51,12 @@
                 <div class="col-lg-3">
                     <div class="card">
                         <a type="button" class="btn btn-outline-primary"
-                            href="{{ route('post.index') }}">{{ __('titles.post') }}</a>
+                            href="{{ route('post.index') }}">{{ __('titles.ajax_Crud_post') }}</a>
                     </div>
                 </div>
                 <div class="col-lg-3">
                     <div class="card">
-                        <a type="button" class="btn btn-outline-secondary">Secondary</a>
+                        <a type="button" class="btn btn-outline-secondary" style="color: #ED64A6;">{{ __('titles.livewire_crud_student') }}</a>
                     </div>
                 </div>
                 <div class="col-lg-3">
@@ -71,7 +72,7 @@
 
     @yield('modal')
 
-
+    @livewireScripts
     @yield('scripts.js')
 </body>
 
