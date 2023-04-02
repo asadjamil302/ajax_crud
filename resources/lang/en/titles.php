@@ -17,5 +17,5 @@ return [
     'edit_post' => 'Edit Post',
     'status' => 'Status',
     'ajax_Crud_post' => 'Ajax Crud Post',
-    'livewire_crud_student' => 'Livewire Crud Student',
+    'livewire_crud' => 'Livewire Crud',
 ];

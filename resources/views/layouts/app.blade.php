@@ -36,6 +36,10 @@
                     <li class="nav-item active">
                         <a class="nav-link" href="{{ route('post.index') }}">{{ __('titles.post') }}</a>
                     </li>
+                    <li class="nav-item active">
+                        <a class="nav-link" href="{{ route('livewire.index') }}">{{ __('titles.livewire_crud') }}</a>
+                    </li>
+
                 </ul>
             </div>
         @endif
@@ -58,7 +62,7 @@
                 <div class="col-lg-3">
                     <div class="card">
                         <a type="button" class="btn btn-outline-secondary"
-                            style="color: #ED64A6;">{{ __('titles.livewire_crud_student') }}</a>
+                            style="color: #ED64A6;">{{ __('titles.livewire_crud') }}</a>
                     </div>
                 </div>
                 <div class="col-lg-3">

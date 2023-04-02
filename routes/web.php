@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PostsController;
 
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -17,7 +18,10 @@ use App\Http\Controllers\PostsController;
 Route::get('/', function () {
     return view('layouts.app');
 })->name('/home');
-
+//LIVEWIRE CRUD index route
+Route::get('/livewirecrud', function () {
+    return view('livewire.index');
+})->name('livewire.index');
 
 //posts routes for CRUD
 Route::get('/post', [PostsController::class, 'index'])->name('post.index');
@@ -25,3 +29,4 @@ Route::post('/post/store', [PostsController::class, 'store'])->name('post.store'
 Route::get('/post/edit/{id}', [PostsController::class, 'edit'])->name('post.edit');
 Route::post('/post/update/{id}', [PostsController::class, 'update'])->name('post.update');
 Route::delete('/post/delete/{id}', [PostsController::class, 'destroy'])->name('post.delete');
+
