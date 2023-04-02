@@ -7,7 +7,7 @@ use Livewire\Component;
 
 class Items extends Component
 {
-    public $items, $title, $body, $item_id;
+    public $items, $name, $body, $item_id, $email, $phone;
     public $updateMode = false;
     public function render()
     {
@@ -15,14 +15,18 @@ class Items extends Component
         return view('livewire.items');
     }
     private function resetInputFields(){
-        $this->title = '';
+        $this->name = '';
         $this->body = '';
+        $this->email = '';
+        $this->phone = '';
     }
     public function store()
     {
         $validatedDate = $this->validate([
-            'title' => 'required',
+            'name' => 'required|max:50',
             'body' => 'required',
+            'email' => 'required|email',
+            'phone' => 'nullable|numeric',
         ]);
   
         Item::create($validatedDate);
@@ -35,8 +39,10 @@ class Items extends Component
     {
         $item = Item::findOrFail($id);
         $this->item_id = $id;
-        $this->title = $item->title;
+        $this->name = $item->name;
         $this->body = $item->body;
+        $this->email = $item->email;
+        $this->phone = $item->phone;
   
         $this->updateMode = true;
     }
@@ -49,14 +55,18 @@ class Items extends Component
     public function update()
     {
         $validatedDate = $this->validate([
-            'title' => 'required',
+            'name' => 'required|max:50',
             'body' => 'required',
+            'email' => 'required|email',
+            'phone' => 'nullable|numeric',
         ]);
   
         $item = Item::find($this->item_id);
         $item->update([
-            'title' => $this->title,
+            'name' => $this->name,
             'body' => $this->body,
+            'email' => $this->email,
+            'phone' => $this->phone,
         ]);
   
         $this->updateMode = false;

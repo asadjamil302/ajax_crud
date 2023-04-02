@@ -10,7 +10,9 @@ class Item extends Model
     use HasFactory;
     protected $table = 'item';
     protected $fillable = [
-        'title',
+        'name',
         'body',
+        'email',
+        'phone',
     ];
 }

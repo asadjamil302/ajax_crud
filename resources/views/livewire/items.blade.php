@@ -16,7 +16,9 @@
         <thead>
             <tr>
                 <th>No.</th>
-                <th>Title</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone No</th>
                 <th>Body</th>
                 <th width="150px">Action</th>
             </tr>
@@ -24,9 +26,11 @@
         <tbody>
             @foreach($items as $item)
             <tr>
-                <td>{{ $item->id }}</td>
-                <td>{{ $item->title }}</td>
-                <td>{{ $item->body }}</td>
+                <td>{{ $item->id}}</td>
+                <td>{{ $item->name  }}</td>
+                <td>{{ $item->email }}</td>
+                <td>{{ $item->phone}}</td>
+                <td>{{ $item->body}}</td>
                 <td>
                 <button wire:click="edit({{ $item->id }})" class="btn btn-primary btn-sm">Edit</button>
                     <button wire:click="delete({{ $item->id }})" class="btn btn-danger btn-sm">Delete</button>
