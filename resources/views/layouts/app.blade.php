@@ -39,6 +39,7 @@
                 </ul>
             </div>
         @endif
+
     </nav>
 
     @if (Route::currentRouteName() == '/home')
@@ -56,7 +57,8 @@
                 </div>
                 <div class="col-lg-3">
                     <div class="card">
-                        <a type="button" class="btn btn-outline-secondary" style="color: #ED64A6;">{{ __('titles.livewire_crud_student') }}</a>
+                        <a type="button" class="btn btn-outline-secondary"
+                            style="color: #ED64A6;">{{ __('titles.livewire_crud_student') }}</a>
                     </div>
                 </div>
                 <div class="col-lg-3">
@@ -72,8 +74,11 @@
 
     @yield('modal')
 
+
     @livewireScripts
+
     @yield('scripts.js')
+
 </body>
 
 </html>
